@@ -130,10 +130,10 @@ export default function Dashboard() {
   const { metrics, portfolio_value_index } = portfolioData;
 
   // Derive portfolio value from relative index (Base $100,000 for index 100.0)
-  const firstPoint = portfolio_value_index?.[0]?.value || 100;
-  const latestPoint = portfolio_value_index?.[portfolio_value_index.length - 1]?.value || 100;
-  const derivedPortfolioValue = latestPoint * 1000;
-  const overallReturnPct = ((latestPoint - firstPoint) / firstPoint) * 100;
+  const firstPoint = portfolio_value_index?.[0]?.value;
+  const latestPoint = portfolio_value_index?.[portfolio_value_index.length - 1]?.value;
+  const derivedPortfolioValue = latestPoint ? latestPoint * 1000 : 0;
+  const overallReturnPct = (firstPoint && latestPoint) ? ((latestPoint - firstPoint) / firstPoint) * 100 : 0;
   const overallTone = overallReturnPct >= 0 ? 'up' : 'down';
   const overallBadgeText = `${overallReturnPct >= 0 ? '▲' : '▼'} ${Math.abs(overallReturnPct).toFixed(2)}%`;
 
