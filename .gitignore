@@ -45,6 +45,11 @@ dist-ssr/
 .env.production.local
 !.env.example
 
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
 # OS / Editor
 .DS_Store
 Thumbs.db
