@@ -84,3 +84,63 @@ class PortfolioAnalyzeResponse(BaseModel):
     period: Period
     portfolio_value_index: List[PortfolioIndexPoint]
     metrics: Metrics
+
+
+# ---------------------------------------------------------------------------
+# Hypothesis Testing Schemas
+# ---------------------------------------------------------------------------
+class HypothesisTestRequest(BaseModel):
+    indicator_code: str
+    ticker: str
+    start: str
+    end: str
+    alpha: float = Field(default=0.05, description="Significance level")
+
+
+class Hypotheses(BaseModel):
+    h0: str
+    h1: str
+
+
+class HypothesisTestResult(BaseModel):
+    r: float
+    p_value: float
+    alpha: float
+    n_obs: int
+    reject_null: bool
+    interpretation: str
+
+
+class HypothesisTestResponse(BaseModel):
+    indicator_code: str
+    indicator_name: str
+    ticker: str
+    period: Period
+    hypotheses: Hypotheses
+    result: HypothesisTestResult
+
+
+# ---------------------------------------------------------------------------
+# Forecast Schemas
+# ---------------------------------------------------------------------------
+class BacktestPoint(BaseModel):
+    date: str
+    prev_actual: float
+    actual: float
+    predicted: float
+
+
+class ForecastEvaluation(BaseModel):
+    mae: float
+    rmse: float
+    mape: float
+    directional_accuracy: float
+    n_obs: int
+
+
+class ForecastResponse(BaseModel):
+    ticker: str
+    window: int
+    test_size: int
+    backtest: List[BacktestPoint]
+    evaluation: ForecastEvaluation
