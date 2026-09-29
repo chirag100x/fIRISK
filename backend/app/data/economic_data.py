@@ -119,6 +119,15 @@ def get_india_indicator(indicator_code: str) -> pd.DataFrame:
             if not date_val:
                 continue
 
+            # Normalize annual year values to full date "YYYY-01-01"
+            if len(date_val) == 4 and date_val.isdigit():
+                date_val = f"{date_val}-01-01"
+            else:
+                try:
+                    date_val = pd.to_datetime(date_val).strftime("%Y-%m-%d")
+                except Exception:
+                    pass
+
             # Determine indicator name
             raw_indicator_info = item.get("indicator")
             default_label = (
