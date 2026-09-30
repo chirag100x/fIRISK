@@ -73,3 +73,39 @@ export async function getAssetPrices(ticker, start, end) {
 
   return response.json();
 }
+
+/**
+ * Fetch asset risk analytics and moving averages.
+ * @param {string} ticker
+ * @param {string} start - 'YYYY-MM-DD'
+ * @param {string} end - 'YYYY-MM-DD'
+ * @returns {Promise<any>}
+ */
+export async function getAssetAnalytics(ticker, start, end) {
+  const params = new URLSearchParams({ start, end });
+  const url = `${BASE_URL}/api/assets/${encodeURIComponent(ticker)}/analytics?${params.toString()}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    let errorDetail = `Failed to fetch analytics for ${ticker} (${response.status})`;
+    try {
+      const errorData = await response.json();
+      if (errorData && errorData.detail) {
+        errorDetail = typeof errorData.detail === 'string'
+          ? errorData.detail
+          : JSON.stringify(errorData.detail);
+      }
+    } catch {
+      // response wasn't JSON
+    }
+    throw new Error(errorDetail);
+  }
+
+  return response.json();
+}
+

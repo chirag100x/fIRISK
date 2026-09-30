@@ -4,6 +4,7 @@ import { ThemeProvider } from './components/layout/ThemeProvider';
 import ThemeToggle from './components/layout/ThemeToggle';
 import AmbientBackground from './components/layout/AmbientBackground';
 import Dashboard from './pages/Dashboard';
+import AssetAnalysis from './pages/AssetAnalysis';
 import PortfolioBuilder from './pages/PortfolioBuilder';
 import Placeholder from './pages/Placeholder';
 
@@ -90,15 +91,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
-            <Route
-              path="assets"
-              element={
-                <Placeholder
-                  title="Asset Analysis"
-                  description="Detailed risk metrics, moving averages, and volatility trends for individual US and Indian equities."
-                />
-              }
-            />
+            <Route path="assets" element={<AssetAnalysis />} />
+            <Route path="assets/:ticker" element={<AssetAnalysis />} />
             <Route
               path="portfolio"
               element={<PortfolioBuilder />}

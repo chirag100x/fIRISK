@@ -4,37 +4,15 @@ import Badge from '../components/ui/Badge';
 import { usePortfolioAnalysis } from '../hooks/usePortfolioAnalysis';
 import PortfolioResultsPanel from '../components/portfolio/PortfolioResultsPanel';
 
+import StockPicker from '../components/ui/StockPicker';
+import DateRangeControl from '../components/ui/DateRangeControl';
+import { getDateRange } from '../lib/dateUtils';
+
 const INITIAL_HOLDINGS = [
   { ticker: 'AAPL', weight: 40 },
   { ticker: 'MSFT', weight: 30 },
   { ticker: 'RELIANCE.NS', weight: 30 },
 ];
-
-const DATE_RANGES = [
-  { id: '1M', label: '1M' },
-  { id: '3M', label: '3M' },
-  { id: '6M', label: '6M' },
-  { id: '1Y', label: '1Y' },
-];
-
-function getDateRange(rangePreset) {
-  const end = new Date();
-  const start = new Date();
-  if (rangePreset === '1M') {
-    start.setMonth(start.getMonth() - 1);
-  } else if (rangePreset === '3M') {
-    start.setMonth(start.getMonth() - 3);
-  } else if (rangePreset === '6M') {
-    start.setMonth(start.getMonth() - 6);
-  } else {
-    // 1Y
-    start.setFullYear(start.getFullYear() - 1);
-  }
-  return {
-    start: start.toISOString().split('T')[0],
-    end: end.toISOString().split('T')[0],
-  };
-}
 
 export default function PortfolioBuilder() {
   const [holdings, setHoldings] = useState(INITIAL_HOLDINGS);
@@ -60,10 +38,6 @@ export default function PortfolioBuilder() {
     });
     // Clear validation error when user edits
     if (validationError) setValidationError(null);
-  };
-
-  const handleTickerBlur = (index, value) => {
-    updateHolding(index, 'ticker', value.trim().toUpperCase());
   };
 
   const addHolding = () => {
@@ -131,30 +105,11 @@ export default function PortfolioBuilder() {
         </div>
 
         {/* Date Range Segmented Control */}
-        <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] self-start sm:self-auto">
-          {DATE_RANGES.map((r) => {
-            const isActive = selectedRange === r.id;
-            return (
-              <button
-                key={r.id}
-                type="button"
-                id={`range-btn-${r.id}`}
-                onClick={() => setSelectedRange(r.id)}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                  isActive
-                    ? 'shadow-sm'
-                    : 'hover:text-[var(--text-primary)]'
-                }`}
-                style={{
-                  backgroundColor: isActive ? 'var(--gold)' : 'transparent',
-                  color: isActive ? '#0B0D14' : 'var(--text-secondary)',
-                }}
-              >
-                {r.label}
-              </button>
-            );
-          })}
-        </div>
+        <DateRangeControl
+          value={selectedRange}
+          onChange={setSelectedRange}
+          className="self-start sm:self-auto"
+        />
       </div>
 
       {/* Holdings Configuration Card */}
@@ -218,17 +173,14 @@ export default function PortfolioBuilder() {
               key={index}
               className="grid grid-cols-12 gap-3 items-center p-2 rounded-xl bg-[var(--surface-hero)] border border-[var(--border)] transition-colors hover:border-[var(--border-strong)]"
             >
-              {/* Ticker Input */}
+              {/* Ticker Input with StockPicker */}
               <div className="col-span-6 sm:col-span-7">
-                <input
-                  type="text"
+                <StockPicker
                   id={`holding-ticker-${index}`}
+                  compact={true}
                   value={h.ticker}
-                  onChange={(e) => updateHolding(index, 'ticker', e.target.value)}
-                  onBlur={(e) => handleTickerBlur(index, e.target.value)}
+                  onChange={(val) => updateHolding(index, 'ticker', val)}
                   placeholder="e.g. AAPL"
-                  className="w-full px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono tracking-wide bg-[var(--surface)] border border-[var(--border)] focus:outline-none focus:border-[var(--gold)] transition-colors"
-                  style={{ color: 'var(--text-primary)' }}
                 />
               </div>
 
