@@ -4,6 +4,7 @@ import { ThemeProvider } from './components/layout/ThemeProvider';
 import ThemeToggle from './components/layout/ThemeToggle';
 import AmbientBackground from './components/layout/AmbientBackground';
 import Dashboard from './pages/Dashboard';
+import PortfolioBuilder from './pages/PortfolioBuilder';
 import Placeholder from './pages/Placeholder';
 
 function AppLayout() {
@@ -100,12 +101,7 @@ export default function App() {
             />
             <Route
               path="portfolio"
-              element={
-                <Placeholder
-                  title="Portfolio Builder"
-                  description="Customize asset allocations, adjust weights across international equities, and run real-time risk simulations."
-                />
-              }
+              element={<PortfolioBuilder />}
             />
             <Route
               path="forecast"
