@@ -277,7 +277,8 @@ export default function AssetAnalysis() {
                 <PriceChart
                   priceData={pricesData.data}
                   smaData={analyticsData.moving_averages}
-                  height={220}
+                  height={240}
+                  currency={currency}
                   animate={true}
                 />
               </div>

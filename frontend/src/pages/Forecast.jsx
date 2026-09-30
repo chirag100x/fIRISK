@@ -239,6 +239,7 @@ export default function Forecast() {
                 <ForecastChart
                   backtest={forecastData.backtest}
                   height={240}
+                  currency={currency}
                   animate={true}
                 />
               </div>

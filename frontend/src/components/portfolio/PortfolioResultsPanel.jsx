@@ -3,7 +3,7 @@ import Card from '../ui/Card';
 import StatCard from '../ui/StatCard';
 import Badge from '../ui/Badge';
 import AnimatedNumber from '../ui/AnimatedNumber';
-import LineChart from '../ui/LineChart';
+import Chart from '../ui/Chart';
 
 export default function PortfolioResultsPanel({ data, periodLabel = '1-year return' }) {
   if (!data) return null;
@@ -82,12 +82,22 @@ export default function PortfolioResultsPanel({ data, periodLabel = '1-year retu
             </div>
           </div>
 
-          {/* Hand-rolled SVG Line Chart */}
+          {/* Interactive Chart with Axes, Gridlines, and Hover Tooltip */}
           <div className="mt-2 -mx-2 sm:-mx-4">
-            <LineChart
-              data={portfolio_value_index}
-              color="var(--gold)"
-              height={140}
+            <Chart
+              series={[
+                {
+                  key: 'portfolio_value_index',
+                  label: 'Portfolio Index',
+                  color: 'var(--gold)',
+                  dashed: false,
+                  data: portfolio_value_index,
+                  visible: true,
+                },
+              ]}
+              height={170}
+              yFormat={(val) => val.toFixed(1)}
+              toggleableLegend={false}
               animate={true}
             />
           </div>
