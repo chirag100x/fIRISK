@@ -12,8 +12,12 @@ export function getDateRange(rangePreset = '1Y') {
     start.setMonth(start.getMonth() - 3);
   } else if (rangePreset === '6M') {
     start.setMonth(start.getMonth() - 6);
+  } else if (rangePreset === '3Y') {
+    start.setFullYear(start.getFullYear() - 3);
+  } else if (rangePreset === '5Y') {
+    start.setFullYear(start.getFullYear() - 5);
   } else {
-    // 1Y
+    // 1Y default
     start.setFullYear(start.getFullYear() - 1);
   }
   return {

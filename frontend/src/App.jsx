@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import AssetAnalysis from './pages/AssetAnalysis';
 import PortfolioBuilder from './pages/PortfolioBuilder';
 import Forecast from './pages/Forecast';
+import HypothesisTest from './pages/HypothesisTest';
 import Placeholder from './pages/Placeholder';
 
 function AppLayout() {
@@ -100,15 +101,8 @@ export default function App() {
             />
             <Route path="forecast" element={<Forecast />} />
             <Route path="forecast/:ticker" element={<Forecast />} />
-            <Route
-              path="hypothesis"
-              element={
-                <Placeholder
-                  title="Macro Hypothesis Testing"
-                  description="Statistically evaluate relationships between macroeconomic indicators (CPI, FEDFUNDS, UNRATE) and market returns."
-                />
-              }
-            />
+            <Route path="hypothesis" element={<HypothesisTest />} />
+            <Route path="hypothesis/:ticker" element={<HypothesisTest />} />
             <Route
               path="*"
               element={

@@ -147,3 +147,47 @@ export async function getForecast(ticker, window = 20, testSize = 60) {
   return response.json();
 }
 
+/**
+ * Run a macroeconomic correlation hypothesis test.
+ * @param {string} indicatorCode - 'CPIAUCSL' | 'FEDFUNDS' | 'UNRATE'
+ * @param {string} ticker
+ * @param {string} start - 'YYYY-MM-DD'
+ * @param {string} end - 'YYYY-MM-DD'
+ * @param {number} alpha - default 0.05
+ * @returns {Promise<any>}
+ */
+export async function getHypothesisTest(indicatorCode, ticker, start, end, alpha = 0.05) {
+  const url = `${BASE_URL}/api/hypothesis-test`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({
+      indicator_code: indicatorCode,
+      ticker,
+      start,
+      end,
+      alpha,
+    }),
+  });
+
+  if (!response.ok) {
+    let errorDetail = `Failed to run hypothesis test (${response.status})`;
+    try {
+      const errorData = await response.json();
+      if (errorData && errorData.detail) {
+        errorDetail = typeof errorData.detail === 'string'
+          ? errorData.detail
+          : JSON.stringify(errorData.detail);
+      }
+    } catch {
+      // response wasn't JSON
+    }
+    throw new Error(errorDetail);
+  }
+
+  return response.json();
+}
+
