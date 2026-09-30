@@ -109,3 +109,41 @@ export async function getAssetAnalytics(ticker, start, end) {
   return response.json();
 }
 
+/**
+ * Fetch walk-forward forecast backtest and evaluation metrics.
+ * @param {string} ticker
+ * @param {number} window
+ * @param {number} testSize
+ * @returns {Promise<any>}
+ */
+export async function getForecast(ticker, window = 20, testSize = 60) {
+  const params = new URLSearchParams({
+    window: window.toString(),
+    test_size: testSize.toString(),
+  });
+  const url = `${BASE_URL}/api/forecast/${encodeURIComponent(ticker)}?${params.toString()}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    let errorDetail = `Failed to fetch forecast for ${ticker} (${response.status})`;
+    try {
+      const errorData = await response.json();
+      if (errorData && errorData.detail) {
+        errorDetail = typeof errorData.detail === 'string'
+          ? errorData.detail
+          : JSON.stringify(errorData.detail);
+      }
+    } catch {
+      // response wasn't JSON
+    }
+    throw new Error(errorDetail);
+  }
+
+  return response.json();
+}
+

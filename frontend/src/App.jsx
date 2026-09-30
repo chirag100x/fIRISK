@@ -6,6 +6,7 @@ import AmbientBackground from './components/layout/AmbientBackground';
 import Dashboard from './pages/Dashboard';
 import AssetAnalysis from './pages/AssetAnalysis';
 import PortfolioBuilder from './pages/PortfolioBuilder';
+import Forecast from './pages/Forecast';
 import Placeholder from './pages/Placeholder';
 
 function AppLayout() {
@@ -97,15 +98,8 @@ export default function App() {
               path="portfolio"
               element={<PortfolioBuilder />}
             />
-            <Route
-              path="forecast"
-              element={
-                <Placeholder
-                  title="Forecast Engine"
-                  description="Walk-forward backtested moving average predictions with zero-leakage evaluation metrics (MAE, RMSE, MAPE)."
-                />
-              }
-            />
+            <Route path="forecast" element={<Forecast />} />
+            <Route path="forecast/:ticker" element={<Forecast />} />
             <Route
               path="hypothesis"
               element={
