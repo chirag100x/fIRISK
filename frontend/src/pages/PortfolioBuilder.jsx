@@ -6,6 +6,7 @@ import PortfolioResultsPanel from '../components/portfolio/PortfolioResultsPanel
 
 import StockPicker from '../components/ui/StockPicker';
 import DateRangeControl from '../components/ui/DateRangeControl';
+import Button from '../components/ui/Button';
 import { getDateRange } from '../lib/dateUtils';
 
 const INITIAL_HOLDINGS = [
@@ -226,22 +227,16 @@ export default function PortfolioBuilder() {
             {holdings.length} {holdings.length === 1 ? 'row' : 'rows'} configured
           </span>
 
-          <button
-            type="button"
+          <Button
             id="analyze-btn"
             onClick={handleAnalyze}
             disabled={loading}
-            className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-            style={{
-              backgroundColor: 'var(--orange)',
-              color: '#FFFFFF',
-            }}
           >
             {loading && (
               <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
             <span>{loading ? 'Analyzing...' : 'Analyze portfolio'}</span>
-          </button>
+          </Button>
         </div>
       </Card>
 

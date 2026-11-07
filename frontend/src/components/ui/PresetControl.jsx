@@ -1,37 +1,30 @@
 import React from 'react';
+import Segmented from './Segmented';
 import { DEFAULT_FORECAST_PRESETS } from '../../lib/forecastConstants';
 
 export default function PresetControl({
   value = 'standard',
   onChange,
   presets = DEFAULT_FORECAST_PRESETS,
+  variant = 'default',
   className = '',
+  ...props
 }) {
+  const segmentedOptions = presets.map((preset) => ({
+    value: preset.id,
+    label: preset.label,
+    id: `preset-btn-${preset.id}`,
+    title: preset.desc || preset.label,
+  }));
+
   return (
-    <div
-      className={`flex items-center gap-1 p-1 rounded-xl bg-[var(--surface)] border border-[var(--border)] ${className}`}
-    >
-      {presets.map((preset) => {
-        const isActive = value === preset.id;
-        return (
-          <button
-            key={preset.id}
-            type="button"
-            id={`preset-btn-${preset.id}`}
-            onClick={() => onChange(preset.id)}
-            title={preset.desc || preset.label}
-            className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-              isActive ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
-            }`}
-            style={{
-              backgroundColor: isActive ? 'var(--orange)' : 'transparent',
-              color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-            }}
-          >
-            {preset.label}
-          </button>
-        );
-      })}
-    </div>
+    <Segmented
+      options={segmentedOptions}
+      value={value}
+      onChange={onChange}
+      variant={variant}
+      className={className}
+      {...props}
+    />
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import Button from '../components/ui/Button';
 import { usePortfolioAnalysis } from '../hooks/usePortfolioAnalysis';
 import PortfolioResultsPanel from '../components/portfolio/PortfolioResultsPanel';
 
@@ -55,17 +56,12 @@ export default function Dashboard() {
           <p className="text-sm max-w-md" style={{ color: 'var(--text-secondary)' }}>
             Check that the backend is running at <code className="px-1.5 py-0.5 rounded bg-[var(--border)] font-mono text-xs">http://localhost:8000</code>.
           </p>
-          <button
-            type="button"
+          <Button
             onClick={handleFetch}
-            className="mt-2 px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-all hover:scale-105 active:scale-95"
-            style={{
-              backgroundColor: 'var(--orange)',
-              color: '#FFFFFF',
-            }}
+            className="mt-2"
           >
             Retry Analysis
-          </button>
+          </Button>
         </Card>
       </div>
     );

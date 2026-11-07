@@ -7,6 +7,8 @@ import StatCard from '../components/ui/StatCard';
 import Badge from '../components/ui/Badge';
 import StockPicker from '../components/ui/StockPicker';
 import DateRangeControl from '../components/ui/DateRangeControl';
+import Segmented from '../components/ui/Segmented';
+import Button from '../components/ui/Button';
 import { getDateRange } from '../lib/dateUtils';
 
 const SUPPORTED_INDICATORS = [
@@ -104,27 +106,16 @@ export default function HypothesisTest() {
             <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
               1. Select Macroeconomic Indicator
             </span>
-            <div className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-[var(--surface-hero)] border border-[var(--border)] self-start">
-              {SUPPORTED_INDICATORS.map((ind) => {
-                const isActive = selectedIndicator === ind.code;
-                return (
-                  <button
-                    key={ind.code}
-                    type="button"
-                    id={`indicator-btn-${ind.code.toLowerCase()}`}
-                    onClick={() => setSelectedIndicator(ind.code)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                      isActive ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
-                    }`}
-                    style={{
-                      backgroundColor: isActive ? 'var(--orange)' : 'transparent',
-                      color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
-                    }}
-                  >
-                    {ind.label}
-                  </button>
-                );
-              })}
+            <div className="self-start">
+              <Segmented
+                options={SUPPORTED_INDICATORS.map((ind) => ({
+                  value: ind.code,
+                  label: ind.label,
+                  id: `indicator-btn-${ind.code.toLowerCase()}`,
+                }))}
+                value={selectedIndicator}
+                onChange={setSelectedIndicator}
+              />
             </div>
           </div>
 
@@ -153,23 +144,13 @@ export default function HypothesisTest() {
                 />
 
                 {/* Explicit Run Test Button */}
-                <button
-                  type="button"
+                <Button
                   id="run-hypothesis-btn"
                   onClick={handleRunTest}
                   disabled={!selectedTicker || loading}
-                  className={`px-5 py-2 rounded-xl font-bold text-xs sm:text-sm tracking-wide transition-all shadow-md flex items-center justify-center gap-2 ${
-                    !selectedTicker || loading
-                      ? 'opacity-40 cursor-not-allowed'
-                      : 'cursor-pointer hover:brightness-110 active:scale-[0.98]'
-                  }`}
-                  style={{
-                    backgroundColor: 'var(--orange)',
-                    color: '#FFFFFF',
-                  }}
                 >
                   {loading ? 'Running Test...' : 'Run Test'}
-                </button>
+                </Button>
               </div>
             </div>
           </div>
