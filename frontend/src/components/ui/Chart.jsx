@@ -26,7 +26,10 @@ export default function Chart({
   toggleableLegend = false,
   animate = true,
   className = '',
+  variant = 'onDark', // 'onDark' | 'onHero'
+  comparePoints = false,
 }) {
+  const isOnHero = variant === 'onHero';
   const gradientId = useId();
   const primaryPathRef = useRef(null);
   const svgRef = useRef(null);
@@ -34,6 +37,7 @@ export default function Chart({
   const [fillOpacity, setFillOpacity] = useState(animate ? 0 : 1);
   const [hoverIndex, setHoverIndex] = useState(null);
   const [hoverPos, setHoverPos] = useState(null);
+  const [anchorIndex, setAnchorIndex] = useState(null);
 
   // Manage visibility for each series (tracks keys that have been hidden)
   const [hiddenKeys, setHiddenKeys] = useState(() => {
@@ -111,6 +115,18 @@ export default function Chart({
 
     return () => clearTimeout(timer);
   }, [allDates, animate]);
+
+  // Handle Escape key to clear compare anchor
+  useEffect(() => {
+    if (!comparePoints) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setAnchorIndex(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [comparePoints]);
 
   if (!series || series.length === 0 || allDates.length < 2) {
     return (
@@ -217,9 +233,8 @@ export default function Chart({
     };
   });
 
-  // Pointer & Touch handlers for crosshair & tooltip
-  const handlePointerMove = (e) => {
-    if (!svgRef.current || allDates.length < 2) return;
+  const getIdxFromEvent = (e) => {
+    if (!svgRef.current || allDates.length < 2) return null;
     const rect = svgRef.current.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -230,17 +245,41 @@ export default function Chart({
     const ratio = Math.max(0, Math.min(1, plotX / plotWidth));
     const idx = Math.round(ratio * (allDates.length - 1));
 
-    setHoverIndex(idx);
-    setHoverPos({
+    return {
+      idx,
       svgX: marginLeft + (idx / (allDates.length - 1)) * plotWidth,
       ratio,
       normY: (clientY - rect.top) / rect.height,
+    };
+  };
+
+  // Pointer & Touch handlers for crosshair & tooltip
+  const handlePointerMove = (e) => {
+    const res = getIdxFromEvent(e);
+    if (!res) return;
+    setHoverIndex(res.idx);
+    setHoverPos({
+      svgX: res.svgX,
+      ratio: res.ratio,
+      normY: res.normY,
     });
   };
 
   const handlePointerLeave = () => {
     setHoverIndex(null);
     setHoverPos(null);
+  };
+
+  const handleChartClick = (e) => {
+    if (!comparePoints) return;
+    const res = getIdxFromEvent(e);
+    if (!res) return;
+
+    if (anchorIndex === null) {
+      setAnchorIndex(res.idx);
+    } else {
+      setAnchorIndex(null);
+    }
   };
 
   // Active hovered point details
@@ -265,9 +304,42 @@ export default function Chart({
   const nonToggleableSeries = series.filter((s) => s.nonToggleable);
   const toggleableSeries = series.filter((s) => !s.nonToggleable);
 
+  // Compare mode data preparation (anchored to primary series = series[0])
+  const primarySeries = seriesMaps[0] || null;
+  const isComparing = comparePoints && anchorIndex !== null && hoverIndex !== null && anchorIndex !== hoverIndex;
+
+  let compareData = null;
+  if (isComparing && primarySeries) {
+    const earlyIdx = Math.min(anchorIndex, hoverIndex);
+    const lateIdx = Math.max(anchorIndex, hoverIndex);
+    const earlyDate = allDates[earlyIdx];
+    const lateDate = allDates[lateIdx];
+    const earlyVal = primarySeries.map.get(earlyDate);
+    const lateVal = primarySeries.map.get(lateDate);
+
+    if (earlyVal !== null && lateVal !== null && earlyVal !== 0) {
+      const pctChange = ((lateVal - earlyVal) / earlyVal) * 100;
+      compareData = {
+        earlyDate,
+        earlyVal,
+        lateDate,
+        lateVal,
+        pctChange,
+        isPositive: pctChange >= 0,
+      };
+    }
+  }
+
+  const anchorSvgX = anchorIndex !== null ? marginLeft + (anchorIndex / (allDates.length - 1)) * plotWidth : null;
+  const anchorVal = anchorIndex !== null && primarySeries ? primarySeries.map.get(allDates[anchorIndex]) : null;
+  const anchorSvgY =
+    anchorVal !== null && anchorVal !== undefined && !isNaN(anchorVal)
+      ? marginTop + (1 - (anchorVal - paddedMin) / range) * plotHeight
+      : null;
+
   return (
-    <div className={`flex flex-col gap-3 w-full ${className}`}>
-      {/* Legend Row: Rendered when toggleableLegend is true OR when multiple series exist */}
+    <div className={`flex flex-col gap-2 w-full ${className}`}>
+      {/* Legend Row */}
       {(toggleableLegend || series.length > 1) && (
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs px-1">
           {toggleableLegend ? (
@@ -355,11 +427,36 @@ export default function Chart({
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--orange)" stopOpacity="0.22" />
-              <stop offset="70%" stopColor="var(--orange)" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="var(--orange)" stopOpacity="0.0" />
+              <stop
+                offset="0%"
+                stopColor={isOnHero ? '#FFFFFF' : (series[0]?.color || 'var(--orange)')}
+                stopOpacity={isOnHero ? 0.28 : 0.22}
+              />
+              <stop
+                offset={isOnHero ? '100%' : '70%'}
+                stopColor={isOnHero ? '#FFFFFF' : (series[0]?.color || 'var(--orange)')}
+                stopOpacity={isOnHero ? 0.0 : 0.04}
+              />
+              {!isOnHero && (
+                <stop
+                  offset="100%"
+                  stopColor={series[0]?.color || 'var(--orange)'}
+                  stopOpacity={0.0}
+                />
+              )}
             </linearGradient>
           </defs>
+
+          {/* Translucent Compare Band between anchor and hover */}
+          {comparePoints && anchorIndex !== null && hoverIndex !== null && anchorIndex !== hoverIndex && (
+            <rect
+              x={Math.min(anchorSvgX, hoverPos.svgX)}
+              y={marginTop}
+              width={Math.abs(hoverPos.svgX - anchorSvgX)}
+              height={plotHeight}
+              fill={isOnHero ? 'rgba(255, 255, 255, 0.16)' : 'rgba(232, 115, 74, 0.15)'}
+            />
+          )}
 
           {/* Y-Axis Horizontal Gridlines & Value Labels */}
           {gridTicks.map((t, idx) => (
@@ -369,17 +466,17 @@ export default function Chart({
                 y1={t.y}
                 x2={marginLeft + plotWidth}
                 y2={t.y}
-                stroke="var(--border)"
+                stroke={isOnHero ? 'rgba(255, 255, 255, 0.18)' : 'var(--border)'}
                 strokeWidth="1"
                 strokeDasharray="3 3"
-                opacity="0.45"
+                opacity={isOnHero ? 1 : 0.45}
               />
               <text
                 x={marginLeft - 8}
                 y={t.y + 3.5}
                 textAnchor="end"
                 fontSize="10"
-                fill="var(--text-muted)"
+                fill={isOnHero ? 'rgba(255, 255, 255, 0.8)' : 'var(--text-muted)'}
                 fontFamily="var(--font-mono)"
               >
                 {yFormat ? yFormat(t.val) : t.val.toFixed(1)}
@@ -395,7 +492,7 @@ export default function Chart({
               y={marginTop + plotHeight + 16}
               textAnchor="middle"
               fontSize="10"
-              fill="var(--text-muted)"
+              fill={isOnHero ? 'rgba(255, 255, 255, 0.8)' : 'var(--text-muted)'}
               fontFamily="var(--font-mono)"
             >
               {formatShortDate(t.date)}
@@ -419,20 +516,48 @@ export default function Chart({
           )}
 
           {/* Series Lines */}
-          {renderedPaths.map((p) => (
-            <path
-              key={`line-${p.key}`}
-              ref={p.isPrimary && !p.dashed ? primaryPathRef : undefined}
-              d={p.pathD}
-              fill="none"
-              stroke={p.color}
-              strokeWidth={p.isPrimary ? '2.4' : p.dashed ? '2.0' : '1.8'}
-              strokeDasharray={p.dashed ? '5,4' : undefined}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity={p.isPrimary ? '1.0' : '0.9'}
-            />
-          ))}
+          {renderedPaths.map((p) => {
+            const isPrimaryHero = p.isPrimary && isOnHero;
+            return (
+              <path
+                key={`line-${p.key}`}
+                ref={p.isPrimary && !p.dashed ? primaryPathRef : undefined}
+                d={p.pathD}
+                fill="none"
+                stroke={isPrimaryHero ? '#FFFFFF' : p.color}
+                strokeWidth={isPrimaryHero ? '2' : p.isPrimary ? '2.4' : p.dashed ? '2.0' : '1.8'}
+                strokeDasharray={p.dashed ? '5,4' : undefined}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={p.isPrimary ? '1.0' : '0.9'}
+              />
+            );
+          })}
+
+          {/* Anchor Pin Marker (Compare mode) */}
+          {comparePoints && anchorIndex !== null && anchorSvgX !== null && (
+            <g>
+              <line
+                x1={anchorSvgX}
+                y1={marginTop}
+                x2={anchorSvgX}
+                y2={marginTop + plotHeight}
+                stroke={isOnHero ? 'rgba(255, 255, 255, 0.8)' : 'var(--orange)'}
+                strokeWidth="1.5"
+                strokeDasharray="4 3"
+              />
+              {anchorSvgY !== null && (
+                <circle
+                  cx={anchorSvgX}
+                  cy={anchorSvgY}
+                  r="5"
+                  fill={isOnHero ? '#FFFFFF' : 'var(--orange)'}
+                  stroke={isOnHero ? 'var(--orange)' : 'var(--surface)'}
+                  strokeWidth="2"
+                />
+              )}
+            </g>
+          )}
 
           {/* Hover Crosshair Vertical Line */}
           {hoverPos && (
@@ -441,10 +566,10 @@ export default function Chart({
               y1={marginTop}
               x2={hoverPos.svgX}
               y2={marginTop + plotHeight}
-              stroke="var(--orange)"
+              stroke={isOnHero ? 'rgba(255, 255, 255, 0.55)' : 'var(--orange)'}
               strokeWidth="1"
               strokeDasharray="3 3"
-              opacity="0.65"
+              opacity={isOnHero ? 1 : 0.65}
             />
           )}
 
@@ -458,14 +583,14 @@ export default function Chart({
                     cx={hoverPos.svgX}
                     cy={item.ySvg}
                     r="4"
-                    fill={item.color}
-                    stroke="var(--surface)"
+                    fill={isOnHero ? '#FFFFFF' : item.color}
+                    stroke={isOnHero ? 'var(--orange)' : 'var(--surface)'}
                     strokeWidth="2"
                   />
                 )
             )}
 
-          {/* Transparent Overlay capturing pointer and touch events */}
+          {/* Interactive Overlay capturing pointer, click and touch events */}
           <rect
             x={marginLeft}
             y={marginTop}
@@ -473,8 +598,10 @@ export default function Chart({
             height={plotHeight}
             fill="transparent"
             className="cursor-crosshair"
+            style={{ touchAction: 'pan-y' }}
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
+            onClick={handleChartClick}
             onTouchStart={handlePointerMove}
             onTouchMove={handlePointerMove}
             onTouchEnd={handlePointerLeave}
@@ -485,55 +612,124 @@ export default function Chart({
         {hoverPos && activeDate && (
           <div
             id="chart-hover-tooltip"
-            className="absolute pointer-events-none z-30 transition-transform duration-75 shadow-2xl rounded-xl p-3 border"
+            className="absolute pointer-events-none z-30 transition-transform duration-75 shadow-2xl"
             style={{
               left: `${(hoverPos.svgX / width) * 100}%`,
               top: `${Math.max(12, Math.min(68, (hoverPos.normY || 0.3) * 100))}%`,
               transform: hoverPos.ratio > 0.5 ? 'translate(-105%, -50%)' : 'translate(14px, -50%)',
-              backgroundColor: 'var(--surface)',
-              borderColor: 'var(--border-strong)',
+              backgroundColor: isOnHero ? 'rgba(11, 13, 20, 0.82)' : 'var(--surface)',
+              borderColor: isOnHero ? 'rgba(255, 255, 255, 0.12)' : 'var(--border-strong)',
+              borderWidth: '1px',
+              borderStyle: 'solid',
               backdropFilter: 'blur(16px)',
+              borderRadius: isOnHero ? '10px' : '14px',
+              padding: isOnHero ? '8px 10px' : '12px',
+              color: isOnHero ? '#F5F3EF' : 'var(--text-primary)',
               boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
             }}
           >
-            <div
-              className="text-xs font-mono font-bold mb-2 pb-1 border-b border-[var(--border)]"
-              style={{ color: 'var(--text-primary)' }}
-            >
-              {activeDate}
-            </div>
-            <div className="flex flex-col gap-1.5 min-w-[130px]">
-              {tooltipItems.map((item) => (
-                <div key={item.key} className="flex items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full flex-shrink-0"
-                      style={{
-                        backgroundColor: item.color,
-                        border: item.dashed ? '1px dashed var(--border-strong)' : undefined,
-                      }}
-                    />
-                    <span style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
-                  </div>
-                  <span
-                    className="font-mono font-bold"
-                    style={{ color: 'var(--text-primary)' }}
-                  >
-                    {item.value !== null && item.value !== undefined && !isNaN(item.value)
-                      ? yFormat
-                        ? yFormat(item.value)
-                        : item.value.toLocaleString(undefined, {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                      : '—'}
+            {isComparing && compareData ? (
+              /* Compare Two Points Mode Tooltip */
+              <div className="flex flex-col gap-1.5 min-w-[150px]">
+                {/* Line 1: Earlier date + value */}
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="font-mono" style={{ color: isOnHero ? 'rgba(255, 255, 255, 0.75)' : 'var(--text-secondary)' }}>
+                    {compareData.earlyDate}
+                  </span>
+                  <span className="font-mono font-bold">
+                    {yFormat ? yFormat(compareData.earlyVal) : compareData.earlyVal.toFixed(2)}
                   </span>
                 </div>
-              ))}
-            </div>
+
+                {/* Pill with signed % change */}
+                <div className="my-1 flex items-center justify-center">
+                  <span
+                    className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold"
+                    style={
+                      isOnHero
+                        ? {
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            color: '#FFFFFF',
+                          }
+                        : {
+                            backgroundColor: compareData.isPositive ? 'rgba(52, 211, 153, 0.15)' : 'rgba(248, 113, 113, 0.15)',
+                            color: compareData.isPositive ? 'var(--green)' : 'var(--red)',
+                          }
+                    }
+                  >
+                    <span>{compareData.isPositive ? '▲' : '▼'}</span>
+                    <span>
+                      {compareData.isPositive ? '+' : '−'}
+                      {Math.abs(compareData.pctChange).toFixed(2)}%
+                    </span>
+                  </span>
+                </div>
+
+                {/* Line 3: Later date + value */}
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="font-mono" style={{ color: isOnHero ? 'rgba(255, 255, 255, 0.75)' : 'var(--text-secondary)' }}>
+                    {compareData.lateDate}
+                  </span>
+                  <span className="font-mono font-bold">
+                    {yFormat ? yFormat(compareData.lateVal) : compareData.lateVal.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              /* Single Point Tooltip */
+              <>
+                <div
+                  className="text-xs font-mono font-bold mb-2 pb-1 border-b"
+                  style={{
+                    color: isOnHero ? '#F5F3EF' : 'var(--text-primary)',
+                    borderColor: isOnHero ? 'rgba(255, 255, 255, 0.15)' : 'var(--border)',
+                  }}
+                >
+                  {activeDate}
+                </div>
+                <div className="flex flex-col gap-1.5 min-w-[130px]">
+                  {tooltipItems.map((item) => (
+                    <div key={item.key} className="flex items-center justify-between gap-3 text-xs">
+                      <div className="flex items-center gap-1.5">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor: isOnHero && item.key === primarySeries?.key ? '#FFFFFF' : item.color,
+                            border: item.dashed ? '1px dashed var(--border-strong)' : undefined,
+                          }}
+                        />
+                        <span style={{ color: isOnHero ? 'rgba(255, 255, 255, 0.75)' : 'var(--text-secondary)' }}>
+                          {item.label}
+                        </span>
+                      </div>
+                      <span
+                        className="font-mono font-bold"
+                        style={{ color: isOnHero ? '#F5F3EF' : 'var(--text-primary)' }}
+                      >
+                        {item.value !== null && item.value !== undefined && !isNaN(item.value)
+                          ? yFormat
+                            ? yFormat(item.value)
+                            : item.value.toLocaleString(undefined, {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })
+                          : '—'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
+
+      {/* Compare Points Hint Line */}
+      {comparePoints && (
+        <div className="text-[11px] text-center" style={{ color: isOnHero ? 'rgba(255, 255, 255, 0.7)' : 'var(--text-muted)' }}>
+          {anchorIndex !== null ? 'Click again to clear' : 'Click a point, then hover another to compare'}
+        </div>
+      )}
     </div>
   );
 }

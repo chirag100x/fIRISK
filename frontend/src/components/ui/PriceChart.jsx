@@ -67,6 +67,7 @@ export default function PriceChart({
       toggleableLegend={true}
       animate={animate}
       className={className}
+      comparePoints={true}
     />
   );
 }
