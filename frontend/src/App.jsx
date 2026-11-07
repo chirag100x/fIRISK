@@ -31,8 +31,8 @@ function AppLayout() {
               <div
                 className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm tracking-tighter transition-transform group-hover:scale-105"
                 style={{
-                  backgroundColor: 'var(--gold)',
-                  color: '#0B0D14',
+                  backgroundColor: 'var(--orange)',
+                  color: '#FFFFFF',
                 }}
               >
                 fR

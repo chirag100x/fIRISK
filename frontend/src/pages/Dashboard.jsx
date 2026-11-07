@@ -32,7 +32,7 @@ export default function Dashboard() {
     return (
       <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
         <div
-          className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin"
+          className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin"
         />
         <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
           Analyzing portfolio risk across US &amp; Indian markets...
@@ -60,8 +60,8 @@ export default function Dashboard() {
             onClick={handleFetch}
             className="mt-2 px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-all hover:scale-105 active:scale-95"
             style={{
-              backgroundColor: 'var(--gold)',
-              color: '#0B0D14',
+              backgroundColor: 'var(--orange)',
+              color: '#FFFFFF',
             }}
           >
             Retry Analysis

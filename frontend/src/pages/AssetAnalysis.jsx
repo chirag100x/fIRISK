@@ -172,7 +172,7 @@ export default function AssetAnalysis() {
       {/* Loading Spinner */}
       {loading && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
-          <div className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Computing risk metrics &amp; moving averages for {selectedTicker}...
           </p>
@@ -186,7 +186,7 @@ export default function AssetAnalysis() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold"
             style={{
               backgroundColor: 'var(--surface-hero)',
-              color: 'var(--gold)',
+              color: 'var(--orange)',
               border: '1px solid var(--border)',
             }}
           >

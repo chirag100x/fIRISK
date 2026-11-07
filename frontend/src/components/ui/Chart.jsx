@@ -329,7 +329,7 @@ export default function Chart({
                   />
                   <span
                     className="font-semibold text-xs"
-                    style={{ color: s.color === 'var(--gold)' ? 'var(--text-primary)' : s.color }}
+                    style={{ color: s.color === 'var(--orange)' ? 'var(--text-primary)' : s.color }}
                   >
                     {s.label}
                   </span>
@@ -355,9 +355,9 @@ export default function Chart({
         >
           <defs>
             <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--gold)" stopOpacity="0.22" />
-              <stop offset="70%" stopColor="var(--gold)" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="var(--gold)" stopOpacity="0.0" />
+              <stop offset="0%" stopColor="var(--orange)" stopOpacity="0.22" />
+              <stop offset="70%" stopColor="var(--orange)" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="var(--orange)" stopOpacity="0.0" />
             </linearGradient>
           </defs>
 
@@ -441,7 +441,7 @@ export default function Chart({
               y1={marginTop}
               x2={hoverPos.svgX}
               y2={marginTop + plotHeight}
-              stroke="var(--gold)"
+              stroke="var(--orange)"
               strokeWidth="1"
               strokeDasharray="3 3"
               opacity="0.65"

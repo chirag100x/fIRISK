@@ -3,6 +3,10 @@
 
 @theme {
   --color-bg: var(--bg);
+  --color-backdrop: var(--backdrop);
+  --color-frame: var(--frame);
+  --color-input-bg: var(--input-bg);
+  --color-input-background: var(--input-background);
   --color-surface: var(--surface);
   --color-surface-hero: var(--surface-hero);
   --color-text-primary: var(--text-primary);
@@ -11,8 +15,10 @@
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
 
-  --color-gold: var(--gold);
-  --color-gold-dim: var(--gold-dim);
+  --color-orange: var(--orange);
+  --color-orange-dim: var(--orange-dim);
+  --color-teal: var(--teal);
+  --color-hero-gradient: var(--hero-gradient);
   --color-gain: var(--green);
   --color-loss: var(--red);
 
@@ -26,7 +32,13 @@
 
 :root {
   /* Dark (default) */
-  --bg: #0B0D14;
+  --bg: #06070A;
+  --backdrop: #06070A;
+  --page-backdrop: #06070A;
+  --page-background: #06070A;
+  --frame: #0B0D14;
+  --input-bg: #06070A;
+  --input-background: #06070A;
   --surface: #12141F;
   --surface-hero: #161A28;
   --text-primary: #F5F3EF;
@@ -36,8 +48,10 @@
   --border-strong: rgba(245, 243, 239, 0.14);
 
   /* Same in both modes */
-  --gold: #C9A24B;
-  --gold-dim: #8A7038;
+  --orange: #E8734A;
+  --orange-dim: #C4522C;
+  --teal: #3B7A8F;
+  --hero-gradient: linear-gradient(155deg, #E8734A 0%, #C4522C 100%);
   --green: #34D399;
   --red: #F87171;
 
@@ -51,7 +65,13 @@
 
 :root[data-theme="light"] {
   /* Light */
-  --bg: #F7F6F3;
+  --bg: #ECEBE7;
+  --backdrop: #ECEBE7;
+  --page-backdrop: #ECEBE7;
+  --page-background: #ECEBE7;
+  --frame: #F7F6F3;
+  --input-bg: #F2F1EE;
+  --input-background: #F2F1EE;
   --surface: #FFFFFF;
   --surface-hero: #FFFFFF;
   --text-primary: #14151B;

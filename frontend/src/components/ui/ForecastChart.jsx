@@ -12,7 +12,7 @@ export default function ForecastChart({
     {
       key: 'actual',
       label: 'Actual',
-      color: 'var(--gold)',
+      color: 'var(--orange)',
       dashed: false,
       visible: true,
       data: (backtest || []).map((b) => ({ date: b.date, value: b.actual })),

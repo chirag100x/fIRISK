@@ -13,7 +13,7 @@ export default function PriceChart({
     {
       key: 'close',
       label: 'Price (Close)',
-      color: 'var(--gold)',
+      color: 'var(--orange)',
       dashed: false,
       nonToggleable: true,
       visible: true,

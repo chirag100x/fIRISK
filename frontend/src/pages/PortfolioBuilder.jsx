@@ -130,7 +130,7 @@ export default function PortfolioBuilder() {
             type="button"
             id="add-holding-btn"
             onClick={addHolding}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all border border-[var(--border)] hover:border-[var(--gold)] hover:text-[var(--gold)]"
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all border border-[var(--border)] hover:border-[var(--orange)] hover:text-[var(--orange)]"
             style={{
               backgroundColor: 'var(--surface-hero)',
               color: 'var(--text-primary)',
@@ -194,7 +194,7 @@ export default function PortfolioBuilder() {
                   value={h.weight}
                   onChange={(e) => updateHolding(index, 'weight', e.target.value)}
                   placeholder="e.g. 40"
-                  className="w-full px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono bg-[var(--surface)] border border-[var(--border)] focus:outline-none focus:border-[var(--gold)] transition-colors"
+                  className="w-full px-3 py-1.5 rounded-lg text-xs sm:text-sm font-mono bg-[var(--input-bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--orange)] transition-colors"
                   style={{ color: 'var(--text-primary)' }}
                 />
               </div>
@@ -233,12 +233,12 @@ export default function PortfolioBuilder() {
             disabled={loading}
             className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold cursor-pointer transition-all flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             style={{
-              backgroundColor: 'var(--gold)',
-              color: '#0B0D14',
+              backgroundColor: 'var(--orange)',
+              color: '#FFFFFF',
             }}
           >
             {loading && (
-              <div className="w-3.5 h-3.5 border-2 border-[#0B0D14] border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             )}
             <span>{loading ? 'Analyzing...' : 'Analyze portfolio'}</span>
           </button>
@@ -249,7 +249,7 @@ export default function PortfolioBuilder() {
       {loading && !data && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
           <div
-            className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin"
+            className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin"
           />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Analyzing portfolio risk across US &amp; Indian markets...

@@ -117,8 +117,8 @@ export default function HypothesisTest() {
                       isActive ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
                     }`}
                     style={{
-                      backgroundColor: isActive ? 'var(--gold)' : 'transparent',
-                      color: isActive ? '#0B0D14' : 'var(--text-secondary)',
+                      backgroundColor: isActive ? 'var(--orange)' : 'transparent',
+                      color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
                     }}
                   >
                     {ind.label}
@@ -164,8 +164,8 @@ export default function HypothesisTest() {
                       : 'cursor-pointer hover:brightness-110 active:scale-[0.98]'
                   }`}
                   style={{
-                    backgroundColor: 'var(--gold)',
-                    color: '#0B0D14',
+                    backgroundColor: 'var(--orange)',
+                    color: '#FFFFFF',
                   }}
                 >
                   {loading ? 'Running Test...' : 'Run Test'}
@@ -199,7 +199,7 @@ export default function HypothesisTest() {
       {/* Loading Spinner */}
       {loading && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
-          <div className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Evaluating Pearson correlation for {selectedIndicator} vs. {selectedTicker} ({selectedRange})...
           </p>
@@ -213,7 +213,7 @@ export default function HypothesisTest() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold"
             style={{
               backgroundColor: 'var(--surface-hero)',
-              color: 'var(--gold)',
+              color: 'var(--orange)',
               border: '1px solid var(--border)',
             }}
           >
@@ -263,7 +263,7 @@ export default function HypothesisTest() {
                     </span>
                     <span
                       className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono"
-                      style={{ color: 'var(--gold)' }}
+                      style={{ color: 'var(--orange)' }}
                     >
                       {testResult.ticker}
                     </span>

@@ -89,7 +89,7 @@ export default function PortfolioResultsPanel({ data, periodLabel = '1-year retu
                 {
                   key: 'portfolio_value_index',
                   label: 'Portfolio Index',
-                  color: 'var(--gold)',
+                  color: 'var(--orange)',
                   dashed: false,
                   data: portfolio_value_index,
                   visible: true,

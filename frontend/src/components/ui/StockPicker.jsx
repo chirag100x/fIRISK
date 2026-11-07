@@ -145,7 +145,7 @@ export default function StockPicker({
         placeholder={placeholder}
         autoComplete="off"
         spellCheck="false"
-        className={`w-full rounded-lg font-mono tracking-wide bg-[var(--surface)] border border-[var(--border)] focus:outline-none focus:border-[var(--gold)] transition-colors ${
+        className={`w-full rounded-lg font-mono tracking-wide bg-[var(--input-bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--orange)] transition-colors ${
           compact ? 'px-3 py-1.5 text-xs sm:text-sm' : 'px-4 py-2.5 text-sm sm:text-base'
         }`}
         style={{ color: 'var(--text-primary)' }}
@@ -184,8 +184,8 @@ export default function StockPicker({
                     active ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
                   }`}
                   style={{
-                    backgroundColor: active ? 'var(--gold)' : 'var(--border)',
-                    color: active ? '#0B0D14' : 'var(--text-secondary)',
+                    backgroundColor: active ? 'var(--orange)' : 'var(--border)',
+                    color: active ? '#FFFFFF' : 'var(--text-secondary)',
                   }}
                 >
                   {pill.label}
@@ -214,13 +214,13 @@ export default function StockPicker({
                     onMouseEnter={() => setHighlightedIndex(index)}
                     className="flex items-center justify-between px-3.5 py-2.5 cursor-pointer transition-colors"
                     style={{
-                      backgroundColor: isHighlighted ? 'rgba(201, 162, 75, 0.12)' : 'transparent',
+                      backgroundColor: isHighlighted ? 'rgba(232, 115, 74, 0.12)' : 'transparent',
                     }}
                   >
                     <div className="flex items-center gap-2.5 overflow-hidden">
                       <span
                         className="font-mono font-bold text-xs sm:text-sm tracking-wide"
-                        style={{ color: isHighlighted ? 'var(--gold)' : 'var(--text-primary)' }}
+                        style={{ color: isHighlighted ? 'var(--orange)' : 'var(--text-primary)' }}
                       >
                         {item.ticker}
                       </span>

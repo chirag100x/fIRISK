@@ -24,8 +24,8 @@ export default function DateRangeControl({
               isActive ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
             }`}
             style={{
-              backgroundColor: isActive ? 'var(--gold)' : 'transparent',
-              color: isActive ? '#0B0D14' : 'var(--text-secondary)',
+              backgroundColor: isActive ? 'var(--orange)' : 'transparent',
+              color: isActive ? '#FFFFFF' : 'var(--text-secondary)',
             }}
           >
             {label}
