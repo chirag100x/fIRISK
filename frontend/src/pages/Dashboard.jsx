@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
+import DateRangeControl from '../components/ui/DateRangeControl';
 import { usePortfolioAnalysis } from '../hooks/usePortfolioAnalysis';
 import PortfolioResultsPanel from '../components/portfolio/PortfolioResultsPanel';
+import { getDateRange } from '../lib/dateUtils';
 
 const DEMO_HOLDINGS = [
   { ticker: 'AAPL', weight: 40 },
@@ -11,23 +13,27 @@ const DEMO_HOLDINGS = [
   { ticker: 'RELIANCE.NS', weight: 30 },
 ];
 
-function getDateRange() {
-  const end = new Date();
-  const start = new Date();
-  start.setFullYear(start.getFullYear() - 1);
-  return {
-    start: start.toISOString().split('T')[0],
-    end: end.toISOString().split('T')[0],
-  };
-}
-
 export default function Dashboard() {
+  const [selectedRange, setSelectedRange] = useState('1Y');
   const { data, loading, error, analyze } = usePortfolioAnalysis();
 
+  const handleFetch = useCallback(
+    (range = selectedRange) => {
+      const { start, end } = getDateRange(range);
+      analyze(DEMO_HOLDINGS, start, end);
+    },
+    [analyze, selectedRange]
+  );
+
   useEffect(() => {
-    const { start, end } = getDateRange();
-    analyze(DEMO_HOLDINGS, start, end);
+    handleFetch('1Y');
   }, [analyze]);
+
+  const handleRangeChange = (range) => {
+    setSelectedRange(range);
+    const { start, end } = getDateRange(range);
+    analyze(DEMO_HOLDINGS, start, end);
+  };
 
   if (loading || (!data && !error)) {
     return (
@@ -57,7 +63,7 @@ export default function Dashboard() {
             Check that the backend is running at <code className="px-1.5 py-0.5 rounded bg-[var(--border)] font-mono text-xs">http://localhost:8000</code>.
           </p>
           <Button
-            onClick={handleFetch}
+            onClick={() => handleFetch(selectedRange)}
             className="mt-2"
           >
             Retry Analysis
@@ -67,5 +73,18 @@ export default function Dashboard() {
     );
   }
 
-  return <PortfolioResultsPanel data={data} periodLabel="1-year return" />;
+  return (
+    <PortfolioResultsPanel
+      data={data}
+      periodLabel={`${selectedRange} return`}
+      rangeControl={
+        <DateRangeControl
+          variant="onHero"
+          options={['1M', '3M', '6M', '1Y']}
+          value={selectedRange}
+          onChange={handleRangeChange}
+        />
+      }
+    />
+  );
 }
