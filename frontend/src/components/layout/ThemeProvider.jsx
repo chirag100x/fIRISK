@@ -1,35 +1,23 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+// Light mode parked; Gemini direction is dark-only.
 const ThemeContext = createContext({
   theme: 'dark',
   toggleTheme: () => {},
 });
 
-const STORAGE_KEY = 'firisk-theme';
-
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === 'light' || stored === 'dark') {
-        return stored;
-      }
-    }
-    return 'dark';
-  });
+  // Always render dark
+  const [theme] = useState('dark');
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'light') {
-      root.setAttribute('data-theme', 'light');
-    } else {
-      root.setAttribute('data-theme', 'dark');
-    }
-    localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+    root.setAttribute('data-theme', 'dark');
+    root.style.colorScheme = 'dark';
+  }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    // No-op: Gemini direction is dark-only
   };
 
   return (
