@@ -9,10 +9,12 @@ import StockPicker from '../components/ui/StockPicker';
 import PresetControl from '../components/ui/PresetControl';
 import { DEFAULT_FORECAST_PRESETS } from '../lib/forecastConstants';
 import ForecastChart from '../components/ui/ForecastChart';
+import { useDataAsOf } from '../context/DataAsOfContext';
 
 export default function Forecast() {
   const { ticker: paramTicker } = useParams();
   const navigate = useNavigate();
+  const { setAsOf } = useDataAsOf();
 
   const [selectedTicker, setSelectedTicker] = useState(paramTicker ? paramTicker.toUpperCase() : '');
   const [activePreset, setActivePreset] = useState('standard');
@@ -62,6 +64,16 @@ export default function Forecast() {
       fetchForecastData(upper, activePreset);
     }
   }, [paramTicker, activePreset, fetchForecastData]);
+
+  // Sync data date with TopBar chip
+  useEffect(() => {
+    if (forecastData?.backtest?.length) {
+      setAsOf(forecastData.backtest[forecastData.backtest.length - 1].date);
+    } else {
+      setAsOf(null);
+    }
+    return () => setAsOf(null);
+  }, [forecastData, setAsOf]);
 
   // Handle ticker selection from picker
   const handleTickerSelect = (newTicker) => {
@@ -152,7 +164,7 @@ export default function Forecast() {
       {/* Loading Spinner */}
       {loading && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
-          <div className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Computing walk-forward backtest for {selectedTicker} ({currentPresetConfig.window}d MA / {currentPresetConfig.testSize}d test)...
           </p>
@@ -166,7 +178,7 @@ export default function Forecast() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold"
             style={{
               backgroundColor: 'var(--surface-hero)',
-              color: 'var(--orange)',
+              color: 'var(--gold)',
               border: '1px solid var(--border)',
             }}
           >

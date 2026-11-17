@@ -10,6 +10,7 @@ import DateRangeControl from '../components/ui/DateRangeControl';
 import Segmented from '../components/ui/Segmented';
 import Button from '../components/ui/Button';
 import { getDateRange } from '../lib/dateUtils';
+import { useDataAsOf } from '../context/DataAsOfContext';
 
 const SUPPORTED_INDICATORS = [
   { code: 'CPIAUCSL', label: 'Inflation (CPI)' },
@@ -20,6 +21,7 @@ const SUPPORTED_INDICATORS = [
 export default function HypothesisTest() {
   const { ticker: paramTicker } = useParams();
   const navigate = useNavigate();
+  const { setAsOf } = useDataAsOf();
 
   const [selectedIndicator, setSelectedIndicator] = useState('CPIAUCSL');
   const [selectedTicker, setSelectedTicker] = useState(paramTicker ? paramTicker.toUpperCase() : '');
@@ -40,6 +42,16 @@ export default function HypothesisTest() {
       setSelectedTicker(paramTicker.toUpperCase());
     }
   }, [paramTicker]);
+
+  // Sync data date with TopBar chip
+  useEffect(() => {
+    if (testResult?.period?.end) {
+      setAsOf(testResult.period.end);
+    } else {
+      setAsOf(null);
+    }
+    return () => setAsOf(null);
+  }, [testResult, setAsOf]);
 
   const handleTickerSelect = (newTicker) => {
     if (!newTicker) return;
@@ -180,7 +192,7 @@ export default function HypothesisTest() {
       {/* Loading Spinner */}
       {loading && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
-          <div className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Evaluating Pearson correlation for {selectedIndicator} vs. {selectedTicker} ({selectedRange})...
           </p>
@@ -194,7 +206,7 @@ export default function HypothesisTest() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold"
             style={{
               backgroundColor: 'var(--surface-hero)',
-              color: 'var(--orange)',
+              color: 'var(--gold)',
               border: '1px solid var(--border)',
             }}
           >
@@ -244,7 +256,7 @@ export default function HypothesisTest() {
                     </span>
                     <span
                       className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono"
-                      style={{ color: 'var(--orange)' }}
+                      style={{ color: 'var(--gold)' }}
                     >
                       {testResult.ticker}
                     </span>

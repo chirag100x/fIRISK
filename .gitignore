@@ -56,3 +56,6 @@ dist-ssr/
 Thumbs.db
 .idea/
 .vscode/
+
+# Verification outputs
+docs/reference/out/

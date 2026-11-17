@@ -10,10 +10,12 @@ import StockPicker from '../components/ui/StockPicker';
 import DateRangeControl from '../components/ui/DateRangeControl';
 import { getDateRange } from '../lib/dateUtils';
 import PriceChart from '../components/ui/PriceChart';
+import { useDataAsOf } from '../context/DataAsOfContext';
 
 export default function AssetAnalysis() {
   const { ticker: paramTicker } = useParams();
   const navigate = useNavigate();
+  const { setAsOf } = useDataAsOf();
 
   const [selectedTicker, setSelectedTicker] = useState(paramTicker ? paramTicker.toUpperCase() : '');
   const [selectedRange, setSelectedRange] = useState('1Y');
@@ -66,6 +68,16 @@ export default function AssetAnalysis() {
       fetchAssetData(upper, selectedRange);
     }
   }, [paramTicker, selectedRange, fetchAssetData]);
+
+  // Sync data date with TopBar chip
+  useEffect(() => {
+    if (pricesData?.data?.length) {
+      setAsOf(pricesData.data[pricesData.data.length - 1].date);
+    } else {
+      setAsOf(null);
+    }
+    return () => setAsOf(null);
+  }, [pricesData, setAsOf]);
 
   // Handle ticker change from picker
   const handleTickerSelect = (newTicker) => {
@@ -172,7 +184,7 @@ export default function AssetAnalysis() {
       {/* Loading Spinner */}
       {loading && (
         <div className="py-16 flex flex-col items-center justify-center gap-4 text-center">
-          <div className="w-10 h-10 border-2 border-[var(--orange)] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
             Computing risk metrics &amp; moving averages for {selectedTicker}...
           </p>
@@ -186,7 +198,7 @@ export default function AssetAnalysis() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold"
             style={{
               backgroundColor: 'var(--surface-hero)',
-              color: 'var(--orange)',
+              color: 'var(--gold)',
               border: '1px solid var(--border)',
             }}
           >
