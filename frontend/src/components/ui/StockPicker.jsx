@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import TICKERS from '../../data/tickers';
-import Badge from './Badge';
+import Segmented from './Segmented';
 
 export default function StockPicker({
   value = '',
@@ -87,7 +87,6 @@ export default function StockPicker({
   };
 
   const handleInputBlur = () => {
-    // If not closed by click outside listener
     const upper = inputValue.trim().toUpperCase();
     if (upper !== (value || '').toUpperCase()) {
       onChange?.(upper);
@@ -114,7 +113,6 @@ export default function StockPicker({
       if (isOpen && highlightedIndex >= 0 && suggestions[highlightedIndex]) {
         selectSuggestion(suggestions[highlightedIndex].ticker);
       } else {
-        // Picker suggests, does not restrict: submit whatever is typed
         selectSuggestion(inputValue);
       }
     } else if (e.key === 'Escape') {
@@ -124,15 +122,15 @@ export default function StockPicker({
     }
   };
 
-  const marketPills = [
-    { id: 'ALL', label: 'All' },
-    { id: 'US', label: 'US' },
-    { id: 'IN', label: 'India' },
+  const marketFilterOptions = [
+    { value: 'ALL', label: 'All', id: 'filter-pill-all' },
+    { value: 'US', label: 'US', id: 'filter-pill-us' },
+    { value: 'IN', label: 'India', id: 'filter-pill-in' },
   ];
 
   return (
     <div ref={containerRef} className={`relative w-full ${className}`}>
-      {/* Ticker Input */}
+      {/* Recessed Dark Ticker Input */}
       <input
         ref={inputRef}
         type="text"
@@ -145,60 +143,66 @@ export default function StockPicker({
         placeholder={placeholder}
         autoComplete="off"
         spellCheck="false"
-        className={`w-full rounded-lg font-mono tracking-wide bg-[var(--input-bg)] border border-[var(--border)] focus:outline-none focus:border-[var(--orange)] transition-colors ${
+        className={`w-full font-mono tracking-wide transition-all focus:outline-none ${
           compact ? 'px-3 py-1.5 text-xs sm:text-sm' : 'px-4 py-2.5 text-sm sm:text-base'
         }`}
-        style={{ color: 'var(--text-primary)' }}
+        style={{
+          backgroundColor: '#11141c',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
+          borderRadius: '10px',
+          boxShadow: 'inset 0 1px 3px rgba(0, 0, 0, 0.5)',
+          color: 'var(--text)',
+        }}
+        onFocusCapture={(e) => {
+          e.target.style.borderColor = 'var(--gold)';
+          e.target.style.boxShadow = 'inset 0 1px 3px rgba(0,0,0,.5), 0 0 0 1px var(--gold)';
+        }}
+        onBlurCapture={(e) => {
+          e.target.style.borderColor = 'rgba(255, 255, 255, 0.18)';
+          e.target.style.boxShadow = 'inset 0 1px 3px rgba(0, 0, 0, 0.5)';
+        }}
       />
 
-      {/* Dropdown Suggestions */}
+      {/* Dropdown Suggestions using Glass recipe */}
       {isOpen && (
         <div
           id={id ? `${id}-dropdown` : 'stock-picker-dropdown'}
-          className="absolute z-50 left-0 right-0 mt-1.5 rounded-xl shadow-2xl overflow-hidden border border-[var(--border-strong)] transition-all"
+          className="glass absolute z-50 left-0 right-0 mt-1.5 rounded-xl shadow-2xl overflow-hidden transition-all"
           style={{
-            backgroundColor: 'var(--surface)',
-            backdropFilter: 'blur(16px)',
+            backgroundColor: 'rgba(20, 22, 30, 0.95)',
           }}
         >
-          {/* Market Filter Row */}
+          {/* Market Filter Row using Segmented */}
           <div
-            className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]"
-            onMouseDown={(e) => e.preventDefault()} // Keep focus on input
+            className="flex items-center justify-between px-3 py-2 border-b border-[var(--border)] bg-[rgba(255,255,255,0.02)]"
+            onMouseDown={(e) => e.preventDefault()}
           >
-            <span className="text-[10px] uppercase font-bold tracking-wider mr-1" style={{ color: 'var(--text-muted)' }}>
-              Market:
+            <span
+              className="text-[11px] uppercase font-semibold tracking-wider"
+              style={{ color: 'var(--muted)' }}
+            >
+              Market
             </span>
-            {marketPills.map((pill) => {
-              const active = activeMarket === pill.id;
-              return (
-                <button
-                  key={pill.id}
-                  type="button"
-                  id={`filter-pill-${pill.id.toLowerCase()}`}
-                  onClick={() => {
-                    setActiveMarket(pill.id);
-                    setHighlightedIndex(-1);
-                  }}
-                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-all cursor-pointer ${
-                    active ? 'shadow-sm' : 'hover:text-[var(--text-primary)]'
-                  }`}
-                  style={{
-                    backgroundColor: active ? 'var(--orange)' : 'var(--border)',
-                    color: active ? '#FFFFFF' : 'var(--text-secondary)',
-                  }}
-                >
-                  {pill.label}
-                </button>
-              );
-            })}
+            <Segmented
+              options={marketFilterOptions}
+              value={activeMarket}
+              onChange={(val) => {
+                setActiveMarket(val);
+                setHighlightedIndex(-1);
+              }}
+            />
           </div>
 
           {/* Suggestions List */}
           <div className="max-h-60 overflow-y-auto divide-y divide-[var(--border)]">
             {suggestions.length === 0 ? (
-              <div className="px-4 py-3 text-xs text-center" style={{ color: 'var(--text-muted)' }}>
-                No curated match. Press <kbd className="px-1 py-0.5 rounded bg-[var(--border)] text-[10px]">Enter</kbd> to analyze "{inputValue.toUpperCase()}".
+              <div
+                className="px-4 py-3 text-xs text-center"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                No curated match. Press{' '}
+                <kbd className="px-1 py-0.5 rounded bg-[var(--border)] text-[10px]">Enter</kbd> to
+                analyze "{inputValue.toUpperCase()}".
               </div>
             ) : (
               suggestions.map((item, index) => {
@@ -214,28 +218,34 @@ export default function StockPicker({
                     onMouseEnter={() => setHighlightedIndex(index)}
                     className="flex items-center justify-between px-3.5 py-2.5 cursor-pointer transition-colors"
                     style={{
-                      backgroundColor: isHighlighted ? 'rgba(232, 115, 74, 0.12)' : 'transparent',
+                      backgroundColor: isHighlighted ? 'rgba(245, 158, 11, 0.12)' : 'transparent',
                     }}
                   >
                     <div className="flex items-center gap-2.5 overflow-hidden">
                       <span
                         className="font-mono font-bold text-xs sm:text-sm tracking-wide"
-                        style={{ color: isHighlighted ? 'var(--orange)' : 'var(--text-primary)' }}
+                        style={{ color: isHighlighted ? 'var(--gold)' : 'var(--text-primary)' }}
                       >
                         {item.ticker}
                       </span>
                       <span
                         className="text-xs truncate max-w-[180px] sm:max-w-[260px]"
-                        style={{ color: 'var(--text-secondary)' }}
+                        style={{ color: 'var(--muted-2)' }}
                       >
                         {item.name}
                       </span>
                     </div>
 
                     <div className="flex-shrink-0 ml-2">
-                      <Badge tone="neutral" className="text-[10px] px-1.5 py-0">
+                      <span
+                        className="px-1.5 py-0.5 rounded text-[10px] font-mono"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                          color: 'var(--muted-2)',
+                        }}
+                      >
                         {item.market}
-                      </Badge>
+                      </span>
                     </div>
                   </div>
                 );

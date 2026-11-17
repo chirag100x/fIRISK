@@ -6,7 +6,6 @@ export default function PresetControl({
   value = 'standard',
   onChange,
   presets = DEFAULT_FORECAST_PRESETS,
-  variant = 'default',
   className = '',
   ...props
 }) {
@@ -22,7 +21,6 @@ export default function PresetControl({
       options={segmentedOptions}
       value={value}
       onChange={onChange}
-      variant={variant}
       className={className}
       {...props}
     />

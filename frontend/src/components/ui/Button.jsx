@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function Button({
-  variant = 'primary',
+  variant = 'primary', // 'primary' | 'secondary' | 'glass'
   disabled = false,
   children,
   className = '',
@@ -11,23 +11,49 @@ export default function Button({
 }) {
   const isPrimary = variant === 'primary';
 
-  const baseClasses =
-    'inline-flex items-center justify-center gap-2 rounded-full font-bold text-xs sm:text-sm tracking-wide transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--orange)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)] disabled:opacity-45 disabled:cursor-not-allowed disabled:transform-none';
+  const baseStyles = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    borderRadius: '999px',
+    padding: '9px 20px',
+    fontSize: '13px',
+    fontWeight: 600,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.45 : 1,
+    transition: 'all 0.15s ease',
+    border: 'none',
+    outline: 'none',
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+  };
 
-  const variantClasses = isPrimary
-    ? 'bg-[var(--orange)] hover:bg-[var(--orange-dim)] text-white shadow-sm'
-    : 'bg-[var(--surface)] hover:bg-[var(--surface-hero)] text-[var(--text-primary)] border border-[var(--border-strong)]';
+  const primaryStyles = {
+    ...baseStyles,
+    background: 'linear-gradient(180deg, #FBBF24, #F59E0B)',
+    color: '#1a1205',
+    boxShadow: disabled ? 'none' : '0 4px 14px rgba(245, 158, 11, 0.3)',
+  };
+
+  const secondaryStyles = {
+    ...baseStyles,
+    background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08))',
+    color: '#ffffff',
+    border: '1px solid var(--glass-border)',
+    borderTopColor: 'var(--glass-border-top)',
+    backdropFilter: 'var(--glass-blur)',
+    WebkitBackdropFilter: 'var(--glass-blur)',
+    boxShadow: disabled ? 'none' : 'var(--glass-shadow)',
+  };
 
   return (
     <button
       type={type}
       disabled={disabled}
-      className={`${baseClasses} ${variantClasses} ${
-        disabled ? '' : 'cursor-pointer active:scale-[0.98]'
-      } ${className}`}
+      className={`select-none ${isPrimary ? '' : 'glass'} ${className}`}
       style={{
-        padding: '10px 20px',
-        fontWeight: 700,
+        ...(isPrimary ? primaryStyles : secondaryStyles),
         ...style,
       }}
       {...props}

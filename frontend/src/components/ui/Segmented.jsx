@@ -4,37 +4,24 @@ export default function Segmented({
   options = [],
   value,
   onChange,
-  variant = 'default',
   className = '',
   style = {},
   id,
   ...props
 }) {
-  const isOnHero = variant === 'onHero';
-
-  const containerStyle = isOnHero
-    ? {
-        backgroundColor: 'rgba(255, 255, 255, 0.14)',
-        border: 'none',
-        borderRadius: 'var(--radius-pill)',
-        padding: '3px',
-        gap: '2px',
-        ...style,
-      }
-    : {
-        backgroundColor: 'var(--surface)',
-        border: '0.5px solid var(--border)',
-        borderRadius: 'var(--radius-pill)',
-        padding: '3px',
-        gap: '2px',
-        ...style,
-      };
-
   return (
     <div
       id={id}
-      className={`inline-flex items-center select-none ${className}`}
-      style={containerStyle}
+      className={`seg inline-flex items-center select-none ${className}`}
+      style={{
+        display: 'inline-flex',
+        gap: '2px',
+        padding: '3px',
+        borderRadius: '999px',
+        background: 'rgba(255, 255, 255, 0.06)',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        ...style,
+      }}
       role="radiogroup"
       {...props}
     >
@@ -45,51 +32,18 @@ export default function Segmented({
         const itemTitle = typeof opt === 'object' && opt !== null ? opt.title : undefined;
         const isActive = value === itemValue;
 
-        let itemStyle = {
-          padding: '6px 12px',
-          borderRadius: 'var(--radius-pill)',
-          fontSize: '12.5px',
-          lineHeight: '1',
-          transition: 'all 0.15s ease',
+        const activeStyles = {
+          background: 'linear-gradient(180deg, #ecedf1, #c9ccd4)',
+          color: '#1b1d24',
+          fontWeight: 600,
+          boxShadow: '0 1px 4px rgba(0, 0, 0, 0.35)',
         };
 
-        let itemClasses = 'cursor-pointer transition-all border-none outline-none';
-
-        if (isOnHero) {
-          if (isActive) {
-            itemStyle = {
-              ...itemStyle,
-              backgroundColor: 'rgba(255, 255, 255, 0.25)',
-              color: '#FFFFFF',
-              fontWeight: 700,
-            };
-          } else {
-            itemStyle = {
-              ...itemStyle,
-              backgroundColor: 'transparent',
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontWeight: 500,
-            };
-            itemClasses += ' hover:text-white';
-          }
-        } else {
-          if (isActive) {
-            itemStyle = {
-              ...itemStyle,
-              backgroundColor: 'var(--orange)',
-              color: '#FFFFFF',
-              fontWeight: 600,
-            };
-          } else {
-            itemStyle = {
-              ...itemStyle,
-              backgroundColor: 'transparent',
-              color: 'var(--text-secondary)',
-              fontWeight: 500,
-            };
-            itemClasses += ' hover:text-[var(--text-primary)]';
-          }
-        }
+        const inactiveStyles = {
+          background: 'transparent',
+          color: '#c9cbd1',
+          fontWeight: 400,
+        };
 
         return (
           <button
@@ -99,8 +53,17 @@ export default function Segmented({
             title={itemTitle}
             aria-pressed={isActive}
             onClick={() => onChange?.(itemValue)}
-            className={itemClasses}
-            style={itemStyle}
+            className={`transition-all border-none outline-none cursor-pointer ${
+              isActive ? 'on' : 'hover:text-white'
+            }`}
+            style={{
+              fontSize: '13px',
+              padding: '6px 13px',
+              borderRadius: '999px',
+              whiteSpace: 'nowrap',
+              lineHeight: 1,
+              ...(isActive ? activeStyles : inactiveStyles),
+            }}
           >
             {itemLabel}
           </button>

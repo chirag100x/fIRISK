@@ -5,7 +5,6 @@ export default function DateRangeControl({
   value = '1Y',
   onChange,
   options = ['1M', '3M', '6M', '1Y'],
-  variant = 'default',
   className = '',
   ...props
 }) {
@@ -24,7 +23,6 @@ export default function DateRangeControl({
       options={segmentedOptions}
       value={value}
       onChange={onChange}
-      variant={variant}
       className={className}
       {...props}
     />
