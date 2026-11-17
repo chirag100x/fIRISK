@@ -46,9 +46,20 @@ export default function GlassPanel({
     };
   }
 
+  const variantClass =
+    variant === 'hero'
+      ? 'hero'
+      : variant === 'stat'
+      ? 'stat'
+      : variant === 'statNeg'
+      ? 'stat neg'
+      : variant === 'holdings'
+      ? 'holdings'
+      : '';
+
   return (
     <div
-      className={`glass ${className}`}
+      className={`glass ${variantClass} ${className}`.trim()}
       style={{
         ...variantStyles,
         ...style,

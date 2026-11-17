@@ -274,6 +274,7 @@ body {
   gap: 26px;
   margin-left: auto;
   font-size: 14px;
+  transform: translateX(0.77px);
 }
 
 .links a {
@@ -281,6 +282,7 @@ body {
   padding: 6px 0;
   border-bottom: 2px solid transparent;
   text-decoration: none;
+  line-height: normal;
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 

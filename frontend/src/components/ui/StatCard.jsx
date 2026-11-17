@@ -32,6 +32,7 @@ export default function StatCard({
       {...props}
     >
       <div
+        className="l"
         style={{
           fontSize: '13px',
           lineHeight: '16px',
@@ -42,6 +43,7 @@ export default function StatCard({
         {label}
       </div>
       <div
+        className="v"
         style={{
           fontSize: '26px',
           lineHeight: '30px',

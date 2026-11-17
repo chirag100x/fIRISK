@@ -14,7 +14,7 @@ export default function DateRangeControl({
     return {
       value: id,
       label,
-      id: `range-btn-${id}`,
+      id: `range-btn-${String(id).toLowerCase()}`,
     };
   });
 
