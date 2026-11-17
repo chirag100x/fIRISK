@@ -1,5 +1,6 @@
 import React from 'react';
 import Chart from './Chart';
+import CHART_THEME from '../../lib/chartTheme';
 
 export default function PriceChart({
   priceData = [],
@@ -13,7 +14,7 @@ export default function PriceChart({
     {
       key: 'close',
       label: 'Price (Close)',
-      color: 'var(--orange)',
+      color: CHART_THEME.primary.stroke,
       dashed: false,
       nonToggleable: true,
       visible: true,
@@ -22,7 +23,7 @@ export default function PriceChart({
     {
       key: 'sma_20',
       label: 'SMA 20',
-      color: '#3B7A8F',
+      color: CHART_THEME.secondary.sma20.color,
       dashed: false,
       visible: true,
       data: (smaData || []).map((s) => ({ date: s.date, value: s.sma_20 })),
@@ -30,7 +31,7 @@ export default function PriceChart({
     {
       key: 'sma_50',
       label: 'SMA 50',
-      color: '#B59A57',
+      color: CHART_THEME.secondary.sma50.color,
       dashed: false,
       visible: true,
       data: (smaData || []).map((s) => ({ date: s.date, value: s.sma_50 })),
@@ -38,7 +39,7 @@ export default function PriceChart({
     {
       key: 'sma_7',
       label: 'SMA 7',
-      color: '#8B8D9A',
+      color: CHART_THEME.secondary.sma7.color,
       dashed: false,
       visible: false,
       data: (smaData || []).map((s) => ({ date: s.date, value: s.sma_7 })),
@@ -46,7 +47,7 @@ export default function PriceChart({
     {
       key: 'sma_200',
       label: 'SMA 200',
-      color: '#6B7280',
+      color: CHART_THEME.secondary.sma200.color,
       dashed: false,
       visible: false,
       data: (smaData || []).map((s) => ({ date: s.date, value: s.sma_200 })),

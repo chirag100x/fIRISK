@@ -3,7 +3,7 @@ import Chart from './Chart';
 
 export default function LineChart({
   data = [],
-  color = 'var(--orange)',
+  color = 'var(--gold)',
   height = 140,
   animate = true,
   className = '',
