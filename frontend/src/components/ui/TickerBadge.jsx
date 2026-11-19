@@ -35,3 +35,4 @@ export default function TickerBadge({ ticker = '', initials, className = '', sty
     </span>
   );
 }
+

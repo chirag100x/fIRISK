@@ -40,3 +40,4 @@ export const CHART_THEME = {
 };
 
 export default CHART_THEME;
+

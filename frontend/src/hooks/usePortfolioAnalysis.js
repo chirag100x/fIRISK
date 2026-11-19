@@ -60,7 +60,9 @@ export function usePortfolioAnalysis() {
           weight: h.weight,
           currency,
           latestPrice,
+          latest_close: latestPrice,
           dayChangePct,
+          pct_change: dayChangePct,
         };
       });
 

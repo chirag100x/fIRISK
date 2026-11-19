@@ -111,16 +111,18 @@ export default function PortfolioResultsPanel({
         {holdingsList.map((h) => {
           const curated = TICKERS.find((t) => t.ticker === h.ticker);
           const companyName = curated?.name || h.name;
-          const isGain = (h.pct_change ?? 0) >= 0;
+          const latestPrice = h.latestPrice ?? h.latest_close;
+          const dayChangePct = h.dayChangePct ?? h.pct_change;
+          const isGain = (dayChangePct ?? 0) >= 0;
           const glyph = isGain ? '▲' : '▼';
           const currency = h.currency || (h.ticker.endsWith('.NS') ? '₹' : '$');
           const closeStr =
-            h.latest_close !== null && h.latest_close !== undefined
-              ? `${currency}${h.latest_close.toFixed(2)}`
+            latestPrice !== null && latestPrice !== undefined
+              ? `${currency}${latestPrice.toFixed(2)}`
               : '—';
           const changeStr =
-            h.pct_change !== null && h.pct_change !== undefined
-              ? `${glyph} ${Math.abs(h.pct_change).toFixed(2)}%`
+            dayChangePct !== null && dayChangePct !== undefined
+              ? `${glyph} ${Math.abs(dayChangePct).toFixed(2)}%`
               : '—';
 
           return (
